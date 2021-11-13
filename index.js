@@ -21,6 +21,8 @@ async function run () {
         const database = client.db('ancient_pottery');
         const orderCollection = database.collection('orders');
         const userCollection = database.collection('users');
+        const reviewCollection = database.collection('reviews');
+        const productCollection = database.collection('products');
 
         //Order Data user to database
         app.post('/orders', async(req, res) => {
@@ -92,6 +94,35 @@ async function run () {
                 isAdmin = true;
             }
             res.json({admin: isAdmin});
+        })
+
+        // Product data Admin to Database
+        app.post('/products', async(req, res)=> {
+            const product = req.body;
+            const result = await productCollection.insertOne(product);
+            res.json(result);
+        })
+
+        // Product Data Database to Ui
+        app.get('/products', async(req, res) => {
+            const cursor = productCollection.find({});
+            const result = await cursor.toArray(cursor);
+            console.log(cursor);
+            res.json(result);
+        })
+
+        // Review Data User to Database
+        app.post('/reviews', async(req, res) => {
+            const review = req.body;
+            const result = await reviewCollection.insertOne(review);
+            res.json(result);
+        })
+
+        // Review Data Database to Ui
+        app.get('/reviews', async(req, res) => {
+            const cursor = reviewCollection.find({});
+            const result = await cursor.toArray(cursor);
+            res.json(result);
         })
 
     }
